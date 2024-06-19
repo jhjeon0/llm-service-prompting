@@ -10,6 +10,7 @@ packages = [{include = "llm_service_prompting"}]
 python = "^3.11"
 dspy-ai = "^2.4.9"
 jinja2 = "^3.1.4"
+black = "^24.4.2"
 
 
 [build-system]
