@@ -1,23 +1,27 @@
+import os
 import dspy
 
 
 class GenerateAnswer(dspy.Signature):
     """
-    Make instruction based on reason and context
+    Create an instruction based on the given requirements and reason.
     """
 
-    context = dspy.InputField(desc="may contain requirements")
+    context = dspy.InputField(desc="requirements")
     reason = dspy.InputField()
     question = dspy.InputField()
-    answer = dspy.OutputField(desc="satisfying every context")
+    answer = dspy.OutputField(desc="system prompt")
 
 
-def regenerate_agent(context: str, reason: str, api_key: str):
-    turbo = dspy.OpenAI(model="gpt-3.5-turbo", api_key=api_key, temperature=0.35)
+def regenerate_agent(question: list[str], reason: str):
+    turbo = dspy.OpenAI(
+        model="gpt-4o", api_key=os.getenv("OPENAI_API_KEY"), temperature=0.35
+    )
     dspy.settings.configure(lm=turbo)
 
     generate_answer = dspy.ChainOfThought(GenerateAnswer)
-    pred = generate_answer(context=context, reason=reason, question="based on context")
-    # print(turbo.inspect_history(1))
-    # print(pred.answer)
+    pred = generate_answer(
+        context=question[0], reason=reason, question="based on context"
+    )
+
     return pred.answer
