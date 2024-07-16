@@ -16,29 +16,26 @@ question = "요즘 박스오피스에는 흥미가 안생긴다."
 
 
 def _recursive(system_prompt):
-    # system prompt 생성
-
-    # 답변
     answer = run(system_prompt=system_prompt, user_content=question, api_key=api_key)
     print("답변:: ", answer)
     # 검증
     evaluation = evaluation_agent(user_msg=question, result=answer, eval_list=eval_list)
     print(evaluation.answer)
-    # print(evaluation.rationale)
     if evaluation.answer in ["true", "True"]:
         print(system_prompt)
         print("'Done'")
 
     else:
-
         system_prompt = regenerate_agent(
             context=user_context, reason=evaluation.rationale, api_key=api_key
         )
         print("-" * 40)
         print("system_prompt:: ", system_prompt)
-        # answer = run(system_prompt=system_prompt, user_content=question)
-        # evaluation = evaluation_agent(user_msg=question, result=answer, eval_list=eval_list)
-        # print("'modified'", system_prompt)
+        answer = run(system_prompt=system_prompt, user_content=question)
+        evaluation = evaluation_agent(
+            user_msg=question, result=answer, eval_list=eval_list
+        )
+        print("'modified'", system_prompt)
         _recursive(system_prompt)
 
 
